@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => TransactionProvider()),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: AppTheme.theme,
         initialRoute: '/splash',
         routes: {

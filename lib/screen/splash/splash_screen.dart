@@ -81,26 +81,12 @@ class _SplashScreenState extends State<SplashScreen>
 
                   const SizedBox(height: 0),
 
-                  // App name
-                  ShaderMask(
-                    shaderCallback: (bounds) => LinearGradient(
-                      colors: [AppTheme.primary, AppTheme.accent],
-                    ).createShader(bounds),
-                    child: Text(
-                      'InvestsFree',
-                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 25,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
 
                   const SizedBox(height: 16),
 
                   // Tagline
                   Text(
-                    'Go to the next level investing',
+                    'Your Gateway to Exchange Ownership',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: AppTheme.textDim,
                       fontSize: 15,

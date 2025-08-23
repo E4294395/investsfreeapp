@@ -13,65 +13,114 @@ class PlansScreen extends StatefulWidget {
   State<PlansScreen> createState() => _PlansScreenState();
 }
 
-class _PlansScreenState extends State<PlansScreen>
-    with TickerProviderStateMixin {
-  late AnimationController _fadeController;
-  late AnimationController _slideController;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
-
+class _PlansScreenState extends State<PlansScreen> {
   String _selectedCategory = 'All';
-  final List<String> _categories = ['All', 'Basic', 'Premium', 'VIP'];
+  final List<String> _categories = ['All', 'Weekly', 'Monthly', 'Elite'];
 
-  @override
-  void initState() {
-    super.initState();
-    _fadeController = AnimationController(
-      duration: const Duration(milliseconds: 1000),
-      vsync: this,
-    );
+  // Define the exchange plans
+  final List<ExchangePlan> exchangePlans = [
+    ExchangePlan(
+      id: "1",
+      name: "KUCOIN Exchange Plan",
+      logoPath: 'assets/images/kucoin.png',
+      logoColor: Color(0xFF24DC9C),
+      minDeposit: 500,
+      maxDeposit: 1000,
+      returnRate: 2.85,
+      frequency: "weekly",
+      returnTimes: 52,
+      description: "Start small, grow steadily. With just \$500 minimum, you can step into the world of owning exchange shares. KuCoin pays 2.85% weekly, giving you consistent, reliable passive income. Perfect for beginners who want to test the waters.",
+      category: "Weekly",
+    ),
+    ExchangePlan(
+      id: "2",
+      name: "BITGET Exchange Plan",
+      logoPath: 'assets/images/bitget.png',
+      logoColor: Color(0xFF02F0FF),
+      minDeposit: 1000,
+      maxDeposit: 5000,
+      returnRate: 3.80,
+      frequency: "weekly",
+      returnTimes: 52,
+      description: "A stronger step forward. With deposits from \$1,000–\$5,000, Bitget rewards you with 3.80% weekly dividends. It's designed for those ready to move beyond entry-level and accelerate their wealth-building journey.",
+      category: "Weekly",
+    ),
+    ExchangePlan(
+      id: "3",
+      name: "ROBINHOOD Exchange Plan",
+      logoPath: 'assets/images/robinhood.png',
+      logoColor: Color(0xFFCCFF02),
+      minDeposit: 5000,
+      maxDeposit: 10000,
+      returnRate: 5.60,
+      frequency: "weekly",
+      returnTimes: 52,
+      description: "Bridging stocks and crypto. With \$5,000–\$10,000, you tap into the Robinhood ecosystem and enjoy 5.60% weekly payouts. It's the choice for investors who understand both traditional stock investing and the new crypto economy.",
+      category: "Weekly",
+    ),
+    ExchangePlan(
+      id: "4",
+      name: "CRYPTO.COM Exchange Plan",
+      logoPath: 'assets/images/crypto.png',
+      logoColor: Color(0xFF6F8BBA),
+      minDeposit: 10000,
+      maxDeposit: 20000,
+      returnRate: 16.52,
+      frequency: "monthly",
+      returnTimes: 12,
+      description: "Now we enter monthly payouts. Invest \$10,000–\$20,000 and receive a huge 16.52% monthly dividend. This is a serious wealth multiplier, designed for mid-level investors seeking higher returns while still playing safe with a global brand.",
+      category: "Monthly",
+    ),
+    ExchangePlan(
+      id: "5",
+      name: "COINBASE Exchange Plan",
+      logoPath: 'assets/images/coinbase.png',
+      logoColor: Color(0xFF0253FE),
+      minDeposit: 20000,
+      maxDeposit: 50000,
+      returnRate: 21.10,
+      frequency: "monthly",
+      returnTimes: 12,
+      description: "For the bold and strategic. With \$20,000–\$50,000, Coinbase pays 21.10% monthly dividends. You're not just investing — you're becoming part of one of the most recognized crypto exchanges in the world.",
+      category: "Monthly",
+    ),
+    ExchangePlan(
+      id: "6",
+      name: "BINANCE Exchange Plan",
+      logoPath: 'assets/images/binance.png',
+      logoColor: Color(0xFFF1B90E),
+      minDeposit: 50000,
+      maxDeposit: 100000,
+      returnRate: 24.20,
+      frequency: "monthly",
+      returnTimes: 12,
+      description: "The powerhouse. With \$50,000–\$100,000, Binance returns 24.20% monthly dividends. As the world's largest exchange, this plan is for investors who want dominance, scale, and maximum leverage in crypto.",
+      category: "Monthly",
+    ),
+    ExchangePlan(
+      id: "7",
+      name: "SCFI 500 Exchange Plan",
+      logoPath: 'assets/images/scfipro.png',
+      logoColor: Color(0xFF04A2FD),
+      minDeposit: 100000,
+      maxDeposit: 1000000,
+      returnRate: 25.0,
+      frequency: "monthly",
+      returnTimes: 12,
+      description: "The elite circle. With \$100,000–\$1,000,000, this plan pays 25% monthly dividends — the highest tier available. Designed for visionaries and pioneers, the SCFI 500 isn't just an investment. It's a ticket into the future of wealth creation.",
+      category: "Elite",
+    ),
+  ];
 
-    _slideController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
-    );
-
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.elasticOut,
-    ));
-
-    Provider.of<PlanProvider>(context, listen: false).fetchPlans(context);
-    _fadeController.forward();
-    _slideController.forward();
-  }
-
-  @override
-  void dispose() {
-    _fadeController.dispose();
-    _slideController.dispose();
-    super.dispose();
-  }
-
-  List<PlanModel> _getFilteredPlans(List<PlanModel> plans) {
-    if (_selectedCategory == 'All') return plans;
-    return plans.where((plan) =>
-        plan.name.toLowerCase().contains(_selectedCategory.toLowerCase())
-    ).toList();
+  List<ExchangePlan> _getFilteredPlans() {
+    if (_selectedCategory == 'All') return exchangePlans;
+    return exchangePlans.where((plan) => plan.category == _selectedCategory).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    final planProvider = Provider.of<PlanProvider>(context);
     final auth = Provider.of<AuthProvider>(context);
-    final filteredPlans = _getFilteredPlans(planProvider.plans);
+    final filteredPlans = _getFilteredPlans();
 
     return Scaffold(
       body: Container(
@@ -80,26 +129,14 @@ class _PlansScreenState extends State<PlansScreen>
           child: Column(
             children: [
               // Custom App Bar
-              FadeTransition(
-                opacity: _fadeAnimation,
-                child: _buildCustomAppBar(context, auth),
-              ),
+              _buildCustomAppBar(context, auth),
 
               // Category Filter
-              FadeTransition(
-                opacity: _fadeAnimation,
-                child: _buildCategoryFilter(),
-              ),
+              _buildCategoryFilter(),
 
               // Plans List
               Expanded(
-                child: FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: SlideTransition(
-                    position: _slideAnimation,
-                    child: _buildPlansList(planProvider, filteredPlans),
-                  ),
-                ),
+                child: _buildPlansList(filteredPlans),
               ),
             ],
           ),
@@ -133,14 +170,14 @@ class _PlansScreenState extends State<PlansScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Investment Plans',
+                  'Exchange Investment Plans',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppTheme.text,
                   ),
                 ),
                 Text(
-                  'Choose your investment strategy',
+                  'Invest in top exchange shares',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: AppTheme.textDim,
                   ),
@@ -186,8 +223,7 @@ class _PlansScreenState extends State<PlansScreen>
                 _selectedCategory = category;
               });
             },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
+            child: Container(
               margin: const EdgeInsets.only(right: 12),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               decoration: BoxDecoration(
@@ -225,92 +261,10 @@ class _PlansScreenState extends State<PlansScreen>
     );
   }
 
-  Widget _buildPlansList(PlanProvider planProvider, List<PlanModel> plans) {
-    if (planProvider.isLoading) {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation(AppTheme.primary),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Loading investment plans...',
-              style: TextStyle(color: AppTheme.textDim),
-            ),
-          ],
-        ),
-      );
-    }
-
-    if (planProvider.error != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: Colors.red.shade400,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              planProvider.error!,
-              style: TextStyle(
-                color: Colors.red.shade400,
-                fontSize: 16,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                Provider.of<PlanProvider>(context, listen: false)
-                    .fetchPlans(context);
-              },
-              child: const Text('Retry'),
-            ),
-          ],
-        ),
-      );
-    }
-
-    if (plans.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.trending_up_outlined,
-              size: 64,
-              color: AppTheme.textDim,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              _selectedCategory == 'All'
-                  ? 'No investment plans available'
-                  : 'No ${_selectedCategory.toLowerCase()} plans available',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: AppTheme.textDim,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Check back soon for new opportunities',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppTheme.textDim.withOpacity(0.7),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
+  Widget _buildPlansList(List<ExchangePlan> plans) {
     return RefreshIndicator(
       onRefresh: () async {
-        await Provider.of<PlanProvider>(context, listen: false)
-            .fetchPlans(context);
+        await Future.delayed(const Duration(seconds: 1));
       },
       backgroundColor: AppTheme.surface,
       color: AppTheme.primary,
@@ -318,327 +272,372 @@ class _PlansScreenState extends State<PlansScreen>
         padding: const EdgeInsets.all(24),
         itemCount: plans.length,
         itemBuilder: (context, index) {
-          return _buildPlanCard(plans[index], index);
+          return _buildExchangePlanCard(plans[index], index);
         },
       ),
     );
   }
 
-  Widget _buildPlanCard(PlanModel plan, int index) {
-    final isPremium = plan.name.toLowerCase().contains('premium') ||
-        plan.name.toLowerCase().contains('vip');
+  Widget _buildExchangePlanCard(ExchangePlan plan, int index) {
+    final isElite = plan.category == 'Elite';
+    final isMonthly = plan.frequency == 'monthly';
 
-    return TweenAnimationBuilder<double>(
-      duration: Duration(milliseconds: 200 + (index * 100)),
-      tween: Tween(begin: 0.0, end: 1.0),
-      curve: Curves.easeOutBack,
-      builder: (context, value, child) {
-        return Transform.translate(
-          offset: Offset(0, 50 * (1 - value)),
-          child: Opacity(
-            opacity: value,
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 20),
-              decoration: BoxDecoration(
-                gradient: isPremium
-                    ? LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppTheme.primary.withOpacity(0.1),
-                    AppTheme.accent.withOpacity(0.1),
-                  ],
-                )
-                    : null,
-                color: isPremium ? null : AppTheme.surface,
-                borderRadius: BorderRadius.circular(24),
-                border: isPremium
-                    ? Border.all(
-                  color: AppTheme.primary.withOpacity(0.3),
-                  width: 1,
-                )
-                    : null,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
-                  ),
-                  if (isPremium)
-                    BoxShadow(
-                      color: AppTheme.primary.withOpacity(0.2),
-                      blurRadius: 30,
-                      offset: const Offset(0, 12),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      decoration: BoxDecoration(
+        gradient: isElite
+            ? LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            plan.logoColor.withOpacity(0.15),
+            AppTheme.primary.withOpacity(0.1),
+          ],
+        )
+            : null,
+        color: isElite ? null : AppTheme.surface,
+        borderRadius: BorderRadius.circular(24),
+        border: isElite
+            ? Border.all(
+          color: plan.logoColor.withOpacity(0.3),
+          width: 1.5,
+        )
+            : null,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+          if (isElite)
+            BoxShadow(
+              color: plan.logoColor.withOpacity(0.2),
+              blurRadius: 30,
+              offset: const Offset(0, 12),
+            ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Plan Header with Exchange Logo
+                Row(
+                  children: [
+                    Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: plan.logoColor.withOpacity(1),
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(
+                          color: plan.logoColor.withOpacity(1),
+                          width: 2,
+                        ),
+                      ),
+                      child: Image.asset(
+                        plan.logoPath,
+                        fit: BoxFit.contain,
+                        width: 30,
+                        height: 30,
+                      ),
                     ),
-                ],
-              ),
-              child: Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Plan Header
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    plan.name,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall
-                                        ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: AppTheme.text,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 6),
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [AppTheme.primary, AppTheme.accent],
-                                      ),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Text(
-                                      '${plan.returnInterest.toStringAsFixed(1)}% Returns',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              width: 60,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [AppTheme.primary, AppTheme.accent],
-                                ),
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppTheme.primary.withOpacity(0.3),
-                                    blurRadius: 15,
-                                    offset: const Offset(0, 5),
-                                  ),
-                                ],
-                              ),
-                              child: const Icon(
-                                Icons.trending_up,
-                                color: Colors.white,
-                                size: 28,
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 24),
-
-                        // Investment Range
-                        _buildPlanFeature(
-                          Icons.account_balance_wallet,
-                          'Investment Range',
-                          '50\$ - 1000\$',//\${plan.minInvest.toStringAsFixed(0)} - \${plan.maxInvest.toStringAsFixed(0)}
-                        ),
-
-                        const SizedBox(height: 16),
-
-                        // Return Frequency
-                        _buildPlanFeature(
-                          Icons.schedule,
-                          'Return Frequency',
-                          '${plan.times} ${plan.times == '1' ? 'time' : 'times'}',
-                        ),
-
-                        const SizedBox(height: 16),
-
-                        // Capital Back
-                        _buildPlanFeature(
-                          Icons.security,
-                          'Capital Protection',
-                          plan.capitalBack ? 'Protected' : 'Not Protected',
-                          color: plan.capitalBack ? Colors.green : Colors.orange,
-                        ),
-
-                        const SizedBox(height: 24),
-
-                        // Investment Calculator Preview
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: AppTheme.primary.withOpacity(0.05),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: AppTheme.primary.withOpacity(0.1),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            plan.name,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.text,
                             ),
                           ),
-                          child: Column(
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: plan.logoColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: plan.logoColor.withOpacity(0.3),
+                              ),
+                            ),
+                            child: Text(
+                              '${plan.returnRate}% ${plan.frequency.toUpperCase()}',
+                              style: TextStyle(
+                                color: plan.logoColor,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
+                // Investment Range
+                _buildPlanFeature(
+                  Icons.account_balance_wallet,
+                  'Investment Range',
+                  '\$${_formatNumber(plan.minDeposit)} - \$${_formatNumber(plan.maxDeposit)}',
+                  plan.logoColor,
+                ),
+
+                const SizedBox(height: 16),
+
+                // Return Frequency
+                _buildPlanFeature(
+                  Icons.schedule,
+                  'Payout Frequency',
+                  '${plan.returnTimes} times ${plan.frequency}',
+                  plan.logoColor,
+                ),
+
+                const SizedBox(height: 16),
+
+                // Exchange Type
+                _buildPlanFeature(
+                  Icons.security,
+                  'Exchange Type',
+                  plan.name.split(' ')[0],
+                  Colors.green,
+                ),
+
+                const SizedBox(height: 24),
+
+                // Investment Preview
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: plan.logoColor.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: plan.logoColor.withOpacity(0.1),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.calculate,
+                            color: plan.logoColor,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Investment Preview',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: AppTheme.text,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Investment Preview',
+                                'Minimum Investment',
                                 style: Theme.of(context)
                                     .textTheme
-                                    .titleSmall
+                                    .bodySmall
                                     ?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: AppTheme.text,
+                                  color: AppTheme.textDim,
                                 ),
                               ),
-                              const SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Invest: ',//\${plan.minInvest.toStringAsFixed(0)}
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                      color: AppTheme.textDim,
-                                    ),
-                                  ),
-                                  Text(
-                                    '\$50',//Get \${(plan.minInvest * (1 + plan.returnInterest / 100)).toStringAsFixed(0)}
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                      color: Colors.green,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
+                              Text(
+                                '\$${_formatNumber(plan.minDeposit)}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(
+                                  color: plan.logoColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ],
                           ),
-                        ),
-
-                        const SizedBox(height: 24),
-
-                        // Action Buttons
-                        Row(
-                          children: [
-                            Expanded(
-                              child: OutlinedButton.icon(
-                                onPressed: () => _showPlanDetails(plan),
-                                icon: const Icon(Icons.info_outline),
-                                label: const Text('Details'),
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: AppTheme.primary,
-                                  side: BorderSide(color: AppTheme.primary),
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              flex: 2,
-                              child: Container(
-                                decoration: AppTheme.buttonGradientDecoration(),
-                                child: ElevatedButton.icon(
-                                  onPressed: () => _investNow(plan),
-                                  icon: const Icon(
-                                    Icons.rocket_launch,
-                                    color: Colors.white,
-                                  ),
-                                  label: const Text(
-                                    'Invest Now',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.transparent,
-                                    shadowColor: Colors.transparent,
-                                    padding: const EdgeInsets.symmetric(vertical: 12),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Premium Badge
-                  if (isPremium)
-                    Positioned(
-                      top: 16,
-                      right: 16,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Colors.amber, Colors.orange],
+                          Icon(
+                            Icons.arrow_forward,
+                            color: AppTheme.textDim,
                           ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.star,
-                              color: Colors.white,
-                              size: 12,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              'PREMIUM',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                '${plan.frequency.capitalize()} Return',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                  color: AppTheme.textDim,
+                                ),
                               ),
-                            ),
-                          ],
+                              Text(
+                                '\$${_formatNumber((plan.minDeposit * plan.returnRate / 100))}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Description
+                Text(
+                  plan.description,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppTheme.textDim,
+                    height: 1.5,
+                  ),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+
+                const SizedBox(height: 24),
+
+                // Action Buttons
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () => _showExchangePlanDetails(plan),
+                        icon: const Icon(Icons.info_outline),
+                        label: const Text('Details'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: plan.logoColor,
+                          side: BorderSide(color: plan.logoColor),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                       ),
                     ),
-                ],
-              ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [plan.logoColor, plan.logoColor.withOpacity(0.8)],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ElevatedButton.icon(
+                          onPressed: () => _investNow(plan),
+                          icon: const Icon(
+                            Icons.rocket_launch,
+                            color: Colors.white,
+                          ),
+                          label: const Text(
+                            'Invest Now',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-        );
-      },
+
+          // Elite Badge
+          if (isElite)
+            Positioned(
+              top: 16,
+              right: 16,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.amber, Colors.orange],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.crop_outlined,
+                      color: Colors.white,
+                      size: 14,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'ELITE',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 
-  Widget _buildPlanFeature(IconData icon, String title, String value,
-      {Color? color}) {
+  Widget _buildPlanFeature(IconData icon, String title, String value, Color color) {
     return Row(
       children: [
         Container(
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: (color ?? AppTheme.primary).withOpacity(0.1),
+            color: color.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(
             icon,
-            color: color ?? AppTheme.primary,
+            color: color,
             size: 16,
           ),
         ),
@@ -667,7 +666,7 @@ class _PlansScreenState extends State<PlansScreen>
     );
   }
 
-  void _investNow(PlanModel plan) {
+  void _investNow(ExchangePlan plan) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -677,13 +676,13 @@ class _PlansScreenState extends State<PlansScreen>
     );
   }
 
-  void _showPlanDetails(PlanModel plan) {
+  void _showExchangePlanDetails(ExchangePlan plan) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.75,
+        height: MediaQuery.of(context).size.height * 0.8,
         decoration: BoxDecoration(
           color: AppTheme.surface,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
@@ -707,18 +706,19 @@ class _PlansScreenState extends State<PlansScreen>
               child: Row(
                 children: [
                   Container(
-                    width: 50,
-                    height: 50,
+                    width: 60,
+                    height: 60,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [AppTheme.primary, AppTheme.accent],
+                      color: plan.logoColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: plan.logoColor.withOpacity(0.3),
+                        width: 1,
                       ),
-                      shape: BoxShape.circle,
                     ),
-                    child: const Icon(
-                      Icons.trending_up,
-                      color: Colors.white,
-                      size: 24,
+                    child: Image.asset(
+                      plan.logoPath,
+                      fit: BoxFit.contain,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -737,7 +737,7 @@ class _PlansScreenState extends State<PlansScreen>
                           ),
                         ),
                         Text(
-                          'Investment Plan Details',
+                          'Exchange Investment Plan',
                           style: Theme.of(context)
                               .textTheme
                               .bodyMedium
@@ -761,30 +761,49 @@ class _PlansScreenState extends State<PlansScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildDetailItem('Minimum Investment', '\${plan.minInvest.toStringAsFixed(2)}'),
-                    _buildDetailItem('Maximum Investment', '\${plan.maxInvest.toStringAsFixed(2)}'),
-                    _buildDetailItem('Return Rate', '${plan.returnInterest}%'),
-                    _buildDetailItem('Return Frequency', '${plan.times} times'),
-                    _buildDetailItem('Capital Back', plan.capitalBack ? 'Yes' : 'No'),
-
-                    const SizedBox(height: 24),
-
                     Text(
-                      'Risk Assessment',
+                      'Plan Overview',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppTheme.text,
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 16),
+
+                    Text(
+                      plan.description,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppTheme.textDim,
+                        height: 1.5,
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    Text(
+                      'Investment Details',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.text,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    _buildDetailItem('Minimum Investment', '\$${_formatNumber(plan.minDeposit)}'),
+                    _buildDetailItem('Maximum Investment', '\$${_formatNumber(plan.maxDeposit)}'),
+                    _buildDetailItem('Return Rate', '${plan.returnRate}% ${plan.frequency}'),
+                    _buildDetailItem('Return Frequency', '${plan.returnTimes} times per year'),
+                    _buildDetailItem('Exchange', plan.name.split(' ')[0]),
+
+                    const SizedBox(height: 24),
 
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: AppTheme.primary.withOpacity(0.05),
+                        color: plan.logoColor.withOpacity(0.05),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: AppTheme.primary.withOpacity(0.1),
+                          color: plan.logoColor.withOpacity(0.1),
                         ),
                       ),
                       child: Column(
@@ -793,15 +812,15 @@ class _PlansScreenState extends State<PlansScreen>
                           Row(
                             children: [
                               Icon(
-                                Icons.shield_outlined,
-                                color: AppTheme.primary,
+                                Icons.info_outline,
+                                color: plan.logoColor,
                                 size: 20,
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'Low Risk Investment',
+                                'Investment Security',
                                 style: TextStyle(
-                                  color: AppTheme.primary,
+                                  color: plan.logoColor,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -809,7 +828,7 @@ class _PlansScreenState extends State<PlansScreen>
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'This investment plan is designed to provide stable returns with minimal risk exposure. Your capital is protected under our investment guarantee program.',
+                            'Your investment is backed by shares in one of the world\'s leading cryptocurrency exchanges. All investments are processed through secure, regulated channels.',
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: AppTheme.textDim,
                             ),
@@ -827,7 +846,12 @@ class _PlansScreenState extends State<PlansScreen>
               padding: const EdgeInsets.all(24),
               child: Container(
                 width: double.infinity,
-                decoration: AppTheme.buttonGradientDecoration(),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [plan.logoColor, plan.logoColor.withOpacity(0.8)],
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: ElevatedButton.icon(
                   onPressed: () {
                     Navigator.pop(context);
@@ -887,52 +911,64 @@ class _PlansScreenState extends State<PlansScreen>
   }
 
   void _showPlanComparisonDialog(BuildContext context) {
-    final planProvider = Provider.of<PlanProvider>(context, listen: false);
-
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppTheme.surface,
         title: Text(
-          'Plan Comparison',
+          'Exchange Plans Comparison',
           style: TextStyle(color: AppTheme.text),
         ),
         content: SizedBox(
           width: double.maxFinite,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: planProvider.plans.map((plan) => ListTile(
-              leading: Container(
-                width: 40,
-                height: 40,
+          height: 400,
+          child: SingleChildScrollView(
+            child: Column(
+              children: exchangePlans.map((plan) => Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [AppTheme.primary, AppTheme.accent],
+                  color: plan.logoColor.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: plan.logoColor.withOpacity(0.2),
                   ),
-                  shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.trending_up,
-                  color: Colors.white,
-                  size: 20,
+                child: ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: plan.logoColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Image.asset(
+                      plan.logoPath,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  title: Text(
+                    plan.name.split(' ')[0],
+                    style: TextStyle(
+                      color: AppTheme.text,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  subtitle: Text(
+                    '${plan.returnRate}% ${plan.frequency}',
+                    style: TextStyle(color: plan.logoColor),
+                  ),
+                  trailing: Text(
+                    '\${_formatNumber(plan.minDeposit)}+',
+                    style: TextStyle(
+                      color: AppTheme.text,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
-              ),
-              title: Text(
-                plan.name,
-                style: TextStyle(color: AppTheme.text),
-              ),
-              subtitle: Text(
-                '${plan.returnInterest}% returns',
-                style: TextStyle(color: AppTheme.textDim),
-              ),
-              trailing: Text(
-                '\${plan.minInvest.toStringAsFixed(0)}+',
-                style: TextStyle(
-                  color: AppTheme.primary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            )).toList(),
+              )).toList(),
+            ),
           ),
         ),
         actions: [
@@ -946,5 +982,51 @@ class _PlansScreenState extends State<PlansScreen>
         ],
       ),
     );
+  }
+
+  String _formatNumber(double number) {
+    if (number >= 1000000) {
+      return '${(number / 1000000).toStringAsFixed(1)}M';
+    } else if (number >= 1000) {
+      return '${(number / 1000).toStringAsFixed(0)}K';
+    } else {
+      return number.toStringAsFixed(0);
+    }
+  }
+}
+
+// Exchange Plan Model
+class ExchangePlan {
+  final String id;
+  final String name;
+  final String logoPath;
+  final Color logoColor;
+  final double minDeposit;
+  final double maxDeposit;
+  final double returnRate;
+  final String frequency;
+  final int returnTimes;
+  final String description;
+  final String category;
+
+  ExchangePlan({
+    required this.id,
+    required this.name,
+    required this.logoPath,
+    required this.logoColor,
+    required this.minDeposit,
+    required this.maxDeposit,
+    required this.returnRate,
+    required this.frequency,
+    required this.returnTimes,
+    required this.description,
+    required this.category,
+  });
+}
+
+// String extension for capitalize
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
   }
 }
